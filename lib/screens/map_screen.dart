@@ -40,139 +40,104 @@ class _MyMapState extends State<MapScreen> {
     // than having to individually change instances of widgets.
     var marker = markerController.getMarkerList();
     for (int i = 0; i < marker.length; i++) {
-        varaMarkerIcon.add(MarkerIcon(
-          iconWidget: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                marker[i].iconMarker.icon,
-                color: marker[i].iconMarker.color,
-                size: marker[i].iconMarker.size,
-                weight: marker[i].iconMarker.weight,
-                grade: marker[i].iconMarker.grade,
-                opticalSize: marker[i].iconMarker.opticalSize,
-                fill: marker[i].iconMarker.fill,
-              ),
-              Text(marker[i].text),
-            ],
-          ),
+      varaMarkerIcon.add(MarkerIcon(
+        iconWidget: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              marker[i].iconMarker.icon,
+              color: marker[i].iconMarker.color,
+              size: marker[i].iconMarker.size,
+              weight: marker[i].iconMarker.weight,
+              grade: marker[i].iconMarker.grade,
+              opticalSize: marker[i].iconMarker.opticalSize,
+              fill: marker[i].iconMarker.fill,
+            ),
+            Text(marker[i].text),
+          ],
         ),
+      ),
       );
     }
     return Stack(
-          children:[OSMFlutter(
-            controller: controller,
-            mapIsLoading: Center(child: CircularProgressIndicator(),
+        children:[OSMFlutter(
+          controller: controller,
+          mapIsLoading: Center(child: CircularProgressIndicator(),
+          ),
+          osmOption: OSMOption(
+            zoomOption: ZoomOption(
+              initZoom: 17,
+              minZoomLevel: 15,
+              maxZoomLevel: 19,
+              stepZoom: 0.5,
             ),
-            osmOption: OSMOption(
-              zoomOption: ZoomOption(
-                initZoom: 17,
-                minZoomLevel: 15,
-                maxZoomLevel: 19,
-                stepZoom: 0.5,
+            userLocationMarker: UserLocationMaker(
+              personMarker: MarkerIcon(
+                icon: Icon(
+                  Icons.person_pin_circle,
+                  color: Colors.blue,
+                  size: 56,
+                ),
               ),
-              userLocationMarker: UserLocationMaker(
-                personMarker: MarkerIcon(
+              directionArrowMarker: MarkerIcon(
+                icon: Icon(
+                  Icons.double_arrow,
+                  size: 48,
+                ),
+              ),
+            ),
+            markerOption: MarkerOption(
+                defaultMarker: MarkerIcon(
                   icon: Icon(
                     Icons.person_pin_circle,
                     color: Colors.blue,
                     size: 56,
                   ),
-                ),
-                directionArrowMarker: MarkerIcon(
-                  icon: Icon(
-                    Icons.double_arrow,
-                    size: 48,
-                  ),
-                ),
-              ),
-              markerOption: MarkerOption(
-                  defaultMarker: MarkerIcon(
-                    icon: Icon(
-                      Icons.person_pin_circle,
-                      color: Colors.blue,
-                      size: 56,
-                    ),
-                  )
-              ),
+                )
             ),
-            onMapIsReady: (isReady) async{
-              if(isReady) {
-                developer.log("log is ready");
-                await controller.limitAreaMap(BoundingBox(north: 44.4760, east: 8.6200, south: 44.4531, west: 8.5800));
-                var marker = markerController.getMarkerList();
-                for (int i = 0; i < marker.length; i++) {
-                  await controller.addMarker(marker[i].position,
-                    markerIcon: varaMarkerIcon[i],);
-                }
-                GeoPoint geoPoint = await controller.myLocation();  //get user location
-                //check if user location is in the limited area
-                if (geoPoint.latitude < 44.4760 && geoPoint.latitude > 44.4531 && geoPoint.longitude < 8.6200 && geoPoint.longitude > 8.5800) {
-                  //if in the limited area, enable tracking
-                  await controller.enableTracking(enableStopFollow:true,);
-                }
+          ),
+          onMapIsReady: (isReady) async{
+            if(isReady) {
+              developer.log("log is ready");
+              await controller.limitAreaMap(BoundingBox(north: 44.4760, east: 8.6200, south: 44.4531, west: 8.5800));
+              var marker = markerController.getMarkerList();
+              for (int i = 0; i < marker.length; i++) {
+                await controller.addMarker(marker[i].position,
+                  markerIcon: varaMarkerIcon[i],);
               }
-            },
-            onGeoPointClicked: (geoPoint) async{
-              var selectedMarker = markerController.getMarker(geoPoint);
-              var newMarker = MarkerIcon(
-                iconWidget: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      selectedMarker.iconMarker.icon,
-                      color: selectedMarker.iconMarker.color,
-                      size: selectedMarker.iconMarker.size + 20,
-                      weight: selectedMarker.iconMarker.weight,
-                      grade: selectedMarker.iconMarker.grade,
-                      opticalSize: selectedMarker.iconMarker.opticalSize,
-                      fill: selectedMarker.iconMarker.fill,
-                    ),
-                    Text(selectedMarker.text),
-                  ],
-                ),
-              );
-              await controller.setMarkerIcon(geoPoint, newMarker);
-              if (markerController.lastSelected != -1) {
-                var lastMarker = markerController.getMarkerList()[markerController
-                    .lastSelected];
-                if (lastMarker.position != geoPoint) {
-                  var newMarker =  MarkerIcon(
-                    iconWidget: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          lastMarker.iconMarker.icon,
-                          color: lastMarker.iconMarker.color,
-                          size: lastMarker.iconMarker.size,
-                          weight: lastMarker.iconMarker.weight,
-                          grade: lastMarker.iconMarker.grade,
-                          opticalSize: lastMarker.iconMarker.opticalSize,
-                          fill: lastMarker.iconMarker.fill,
-                        ),
-                        Text(lastMarker.text),
-                      ],
-                    ),
-                  );
-                  await controller.setMarkerIcon(lastMarker.position, newMarker);
-                }
+              GeoPoint geoPoint = await controller.myLocation();  //get user location
+              //check if user location is in the limited area
+              if (geoPoint.latitude < 44.4760 && geoPoint.latitude > 44.4531 && geoPoint.longitude < 8.6200 && geoPoint.longitude > 8.5800) {
+                //if in the limited area, enable tracking
+                await controller.enableTracking(enableStopFollow:true,);
               }
-              setState(() {
-                markerController.selectMarker(geoPoint);
-              });
-
-
-            },
-          ),PopScope(
-            canPop: false,
-            onPopInvoked: (bool didPop) async {
-              developer.log("PopScope: $didPop");
-              if (didPop) {
-                return;
-              }
-              if (markerController.lastSelected != -1) {
-                var lastMarker = markerController.getMarkerList()[markerController.lastSelected];
-                controller.setMarkerIcon(lastMarker.position, MarkerIcon(
+            }
+          },
+          onGeoPointClicked: (geoPoint) async{
+            var selectedMarker = markerController.getMarker(geoPoint);
+            var newMarker = MarkerIcon(
+              iconWidget: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    selectedMarker.iconMarker.icon,
+                    color: selectedMarker.iconMarker.color,
+                    size: selectedMarker.iconMarker.size + 20,
+                    weight: selectedMarker.iconMarker.weight,
+                    grade: selectedMarker.iconMarker.grade,
+                    opticalSize: selectedMarker.iconMarker.opticalSize,
+                    fill: selectedMarker.iconMarker.fill,
+                  ),
+                  Text(selectedMarker.text),
+                ],
+              ),
+            );
+            await controller.setMarkerIcon(geoPoint, newMarker);
+            if (markerController.lastSelected != -1) {
+              var lastMarker = markerController.getMarkerList()[markerController
+                  .lastSelected];
+              if (lastMarker.position != geoPoint) {
+                var newMarker =  MarkerIcon(
                   iconWidget: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -188,26 +153,61 @@ class _MyMapState extends State<MapScreen> {
                       Text(lastMarker.text),
                     ],
                   ),
-                ));
+                );
+                await controller.setMarkerIcon(lastMarker.position, newMarker);
               }
-              draggableSheetController.animateTo(0, duration: Duration(milliseconds: 500), curve: Curves.easeInOut);
-              setState(() {
-                markerController.lastSelected = -1;
-              });
-            },
+            }
+            setState(() {
+              markerController.selectMarker(geoPoint);
+            });
+
+
+          },
+        ),PopScope(
+          canPop: false,
+          onPopInvoked: (bool didPop) async {
+            developer.log("PopScope: $didPop");
+            if (didPop) {
+              return;
+            }
+            if (markerController.lastSelected != -1) {
+              var lastMarker = markerController.getMarkerList()[markerController.lastSelected];
+              controller.setMarkerIcon(lastMarker.position, MarkerIcon(
+                iconWidget: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      lastMarker.iconMarker.icon,
+                      color: lastMarker.iconMarker.color,
+                      size: lastMarker.iconMarker.size,
+                      weight: lastMarker.iconMarker.weight,
+                      grade: lastMarker.iconMarker.grade,
+                      opticalSize: lastMarker.iconMarker.opticalSize,
+                      fill: lastMarker.iconMarker.fill,
+                    ),
+                    Text(lastMarker.text),
+                  ],
+                ),
+              ));
+            }
+            draggableSheetController.animateTo(0, duration: Duration(milliseconds: 500), curve: Curves.easeInOut);
+            setState(() {
+              markerController.lastSelected = -1;
+            });
+          },
           child: DraggableScrollableSheet(
               controller: draggableSheetController,
               builder: (context, scrollController) {
-                      if (markerController.lastSelected == -1) {
-                        return Container();
-                      }
-                      var SelectedMarker = markerController.getMarkerList()[markerController.lastSelected];
-                      return  SingleChildScrollView(
-                    controller: scrollController,
-                    child: CustomScrollViewContent(selectedMarker: SelectedMarker),
+                if (markerController.lastSelected == -1) {
+                  return Container();
+                }
+                var SelectedMarker = markerController.getMarkerList()[markerController.lastSelected];
+                return  SingleChildScrollView(
+                  controller: scrollController,
+                  child: CustomScrollViewContent(selectedMarker: SelectedMarker),
 
-                    );
-          }),
+                );
+              }),
         ),]
     );
   }
