@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
+import 'dart:developer' as developer;
+
+import '../models/map_data.dart';
 
 class MapScreen extends StatefulWidget {
 
@@ -41,12 +44,15 @@ class _MyMapState extends State<MapScreen> {
           iconWidget: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-                  Icon(
-                    marker[i].icon,
-                    color: marker[i].color,
-                    size: 36.0,
-                    fill: 1,
-                  ),
+              Icon(
+                marker[i].iconMarker.icon,
+                color: marker[i].iconMarker.color,
+                size: marker[i].iconMarker.size,
+                weight: marker[i].iconMarker.weight,
+                grade: marker[i].iconMarker.grade,
+                opticalSize: marker[i].iconMarker.opticalSize,
+                fill: marker[i].iconMarker.fill,
+              ),
               Text(marker[i].text),
             ],
           ),
@@ -92,6 +98,7 @@ class _MyMapState extends State<MapScreen> {
             ),
             onMapIsReady: (isReady) async{
               if(isReady) {
+                developer.log("log is ready");
                 await controller.limitAreaMap(BoundingBox(north: 44.4760, east: 8.6200, south: 44.4531, west: 8.5800));
                 var marker = markerController.getMarkerList();
                 for (int i = 0; i < marker.length; i++) {
@@ -112,12 +119,15 @@ class _MyMapState extends State<MapScreen> {
                 iconWidget: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                        Icon(
-                          selectedMarker.icon,
-                          color: selectedMarker.color,
-                          size: 56.0,
-                          fill: 1,
-                        ),
+                    Icon(
+                      selectedMarker.iconMarker.icon,
+                      color: selectedMarker.iconMarker.color,
+                      size: selectedMarker.iconMarker.size + 20,
+                      weight: selectedMarker.iconMarker.weight,
+                      grade: selectedMarker.iconMarker.grade,
+                      opticalSize: selectedMarker.iconMarker.opticalSize,
+                      fill: selectedMarker.iconMarker.fill,
+                    ),
                     Text(selectedMarker.text),
                   ],
                 ),
@@ -132,11 +142,14 @@ class _MyMapState extends State<MapScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
-                              lastMarker.icon,
-                              color: lastMarker.color,
-                              size: 36.0,
-                              fill: 1,
-                            ),
+                          lastMarker.iconMarker.icon,
+                          color: lastMarker.iconMarker.color,
+                          size: lastMarker.iconMarker.size,
+                          weight: lastMarker.iconMarker.weight,
+                          grade: lastMarker.iconMarker.grade,
+                          opticalSize: lastMarker.iconMarker.opticalSize,
+                          fill: lastMarker.iconMarker.fill,
+                        ),
                         Text(lastMarker.text),
                       ],
                     ),
@@ -150,34 +163,38 @@ class _MyMapState extends State<MapScreen> {
 
 
             },
-          ),WillPopScope(
-              onWillPop: () async{
-                if (markerController.lastSelected != -1) {
-                  var lastMarker = markerController.getMarkerList()[markerController
-                      .lastSelected];
-                  await controller.setMarkerIcon(lastMarker.position, MarkerIcon(
-                    iconWidget: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        MarkerIcon(
-                            icon: Icon(
-                              lastMarker.icon,
-                              color: lastMarker.color,
-                              size: 36.0,
-                              fill: 1,
-                            )
-                        ),
-                        Text(lastMarker.text),
-                      ],
-                    ),
-                  ));
-                }
-                draggableSheetController.animateTo(0, duration: Duration(milliseconds: 500), curve: Curves.easeInOut);
-                setState(() {
-                  markerController.lastSelected=-1;
-                });
-                return false;
-          },
+          ),PopScope(
+            canPop: false,
+            onPopInvoked: (bool didPop) async {
+              developer.log("PopScope: $didPop");
+              if (didPop) {
+                return;
+              }
+              if (markerController.lastSelected != -1) {
+                var lastMarker = markerController.getMarkerList()[markerController.lastSelected];
+                controller.setMarkerIcon(lastMarker.position, MarkerIcon(
+                  iconWidget: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        lastMarker.iconMarker.icon,
+                        color: lastMarker.iconMarker.color,
+                        size: lastMarker.iconMarker.size,
+                        weight: lastMarker.iconMarker.weight,
+                        grade: lastMarker.iconMarker.grade,
+                        opticalSize: lastMarker.iconMarker.opticalSize,
+                        fill: lastMarker.iconMarker.fill,
+                      ),
+                      Text(lastMarker.text),
+                    ],
+                  ),
+                ));
+              }
+              draggableSheetController.animateTo(0, duration: Duration(milliseconds: 500), curve: Curves.easeInOut);
+              setState(() {
+                markerController.lastSelected = -1;
+              });
+            },
           child: DraggableScrollableSheet(
               controller: draggableSheetController,
               builder: (context, scrollController) {
@@ -193,341 +210,5 @@ class _MyMapState extends State<MapScreen> {
           }),
         ),]
     );
-  }
-}
-
-
-class CustomScrollViewContent extends StatelessWidget {
-
-      VaraMarker selectedMarker;
-      CustomScrollViewContent({
-          Key? key,
-          required this.selectedMarker
-        }) : super(key: key);
-
-    @override
-    Widget build(BuildContext context) {
-    return Container(
-    decoration: const BoxDecoration(
-    borderRadius: BorderRadius.only(topLeft: Radius.circular(24), topRight: Radius.circular(24)),
-      color: Colors.lightGreenAccent,
-    ),
-    child: Column(
-      children: <Widget>[
-      const SizedBox(height: 12), Container(
-          height: 5,
-          width: 30,
-          decoration: BoxDecoration(color: Colors.grey[200], borderRadius: BorderRadius.circular(16)),
-        ),
-      const SizedBox(height: 16),
-        Padding(
-          padding: const EdgeInsets.only(left: 16, right: 16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Text(selectedMarker.name, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-              Text("See All", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-            ],
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(left: 16),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                CustomRestaurantCategory(),
-                const SizedBox(width: 12),
-                CustomRestaurantCategory(),
-                const SizedBox(width: 12),
-                CustomRestaurantCategory(),
-                const SizedBox(width: 12),
-                CustomRestaurantCategory(),
-                const SizedBox(width: 12),
-              ],
-            ),
-          ),
-        ),
-      const SizedBox(height: 24),
-        const Padding(
-          padding: EdgeInsets.only(left: 16),
-          //only to left align the text
-          child: Row(
-            children: <Widget>[Text("Featured Lists", style: TextStyle(fontSize: 14))],
-          ),
-        ),
-      const SizedBox(height: 16),
-        Padding(
-          padding: const EdgeInsets.only(left: 16),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                CustomRestaurantCategory(),
-                const SizedBox(width: 12),
-                CustomRestaurantCategory(),
-                const SizedBox(width: 12),
-                CustomRestaurantCategory(),
-                const SizedBox(width: 12),
-                CustomRestaurantCategory(),
-                const SizedBox(width: 12),
-              ],
-            ),
-          ),
-        ),
-      const SizedBox(height: 24),
-        const Padding(
-          padding: EdgeInsets.only(left: 16),
-          //only to left align the text
-          child: Row(
-            children: <Widget>[Text("Featured Lists", style: TextStyle(fontSize: 14))],
-          ),
-        ),
-        const SizedBox(height: 16),
-        Padding(
-          padding: const EdgeInsets.only(left: 16),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                CustomRestaurantCategory(),
-                const SizedBox(width: 12),
-                CustomRestaurantCategory(),
-                const SizedBox(width: 12),
-                CustomRestaurantCategory(),
-                const SizedBox(width: 12),
-                CustomRestaurantCategory(),
-                const SizedBox(width: 12),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 24),
-        const Padding(
-          padding: EdgeInsets.only(left: 16),
-          //only to left align the text
-          child: Row(
-            children: <Widget>[Text("Featured Lists", style: TextStyle(fontSize: 14))],
-          ),
-        ),
-        const SizedBox(height: 16),
-        Padding(
-          padding: const EdgeInsets.only(left: 16),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                CustomRestaurantCategory(),
-                const SizedBox(width: 12),
-                CustomRestaurantCategory(),
-                const SizedBox(width: 12),
-                CustomRestaurantCategory(),
-                const SizedBox(width: 12),
-                CustomRestaurantCategory(),
-                const SizedBox(width: 12),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 24),
-        const Padding(
-          padding: EdgeInsets.only(left: 16),
-          //only to left align the text
-          child: Row(
-            children: <Widget>[Text("Featured Lists", style: TextStyle(fontSize: 14))],
-          ),
-        ),
-        const SizedBox(height: 16),
-        Padding(
-          padding: const EdgeInsets.only(left: 16),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                CustomRestaurantCategory(),
-                const SizedBox(width: 12),
-                CustomRestaurantCategory(),
-                const SizedBox(width: 12),
-                CustomRestaurantCategory(),
-                const SizedBox(width: 12),
-                CustomRestaurantCategory(),
-                const SizedBox(width: 12),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 24),
-        const Padding(
-          padding: EdgeInsets.only(left: 16),
-          //only to left align the text
-          child: Row(
-            children: <Widget>[Text("Featured Lists", style: TextStyle(fontSize: 14))],
-          ),
-        ),
-        const SizedBox(height: 16),
-        Padding(
-          padding: const EdgeInsets.only(left: 16),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                CustomRestaurantCategory(),
-                SizedBox(width: 12),
-                CustomRestaurantCategory(),
-                SizedBox(width: 12),
-                CustomRestaurantCategory(),
-                SizedBox(width: 12),
-                CustomRestaurantCategory(),
-                SizedBox(width: 12),
-              ],
-            ),
-          ),
-        ),
-        SizedBox(height: 24),
-        Padding(
-          padding: const EdgeInsets.only(left: 16),
-          //only to left align the text
-          child: Row(
-            children: <Widget>[Text("Featured Lists", style: TextStyle(fontSize: 14))],
-          ),
-        ),
-        SizedBox(height: 16),
-        Padding(
-          padding: const EdgeInsets.only(left: 16),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                CustomRestaurantCategory(),
-                SizedBox(width: 12),
-                CustomRestaurantCategory(),
-                SizedBox(width: 12),
-                CustomRestaurantCategory(),
-                SizedBox(width: 12),
-                CustomRestaurantCategory(),
-                SizedBox(width: 12),
-              ],
-            ),
-          ),
-        ),
-        SizedBox(height: 24),
-        Padding(
-          padding: const EdgeInsets.only(left: 16),
-          //only to left align the text
-          child: Row(
-            children: <Widget>[Text("Featured Lists", style: TextStyle(fontSize: 14))],
-          ),
-        ),
-        SizedBox(height: 16),
-        Padding(
-          padding: const EdgeInsets.only(left: 16),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                CustomRestaurantCategory(),
-                SizedBox(width: 12),
-                CustomRestaurantCategory(),
-                SizedBox(width: 12),
-                CustomRestaurantCategory(),
-                SizedBox(width: 12),
-                CustomRestaurantCategory(),
-                SizedBox(width: 12),
-              ],
-            ),
-          ),
-        ),
-        SizedBox(height: 24),
-        Padding(
-          padding: const EdgeInsets.only(left: 16),
-          //only to left align the text
-          child: Row(
-            children: <Widget>[Text("Featured Lists", style: TextStyle(fontSize: 14))],
-          ),
-        ),
-        SizedBox(height: 34)
-      ],
-    ),
-    );
-    }
-    }
-
-class CustomRestaurantCategory extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 100,
-      width: 100,
-      decoration: BoxDecoration(
-        color: Colors.grey[500],
-        borderRadius: BorderRadius.circular(8),
-      ),
-    );
-  }
-}
-
-
-
-class VaraMarker {
-  String name;
-  GeoPoint position;
-  IconData icon;
-  Color color;
-  String text;
-  bool selected = false;
-  VaraMarker(this.name, this.position, this.icon, this.color, this.text);
-}
-class MarkerController {
-  int lastSelected = -1;
-  List<VaraMarker> marker = [
-    VaraMarker("Pino", GeoPoint(latitude: 44.46547, longitude: 8.60171),
-        Icons.pin_drop, Colors.red, "Pino"),
-    VaraMarker("Caro", GeoPoint(latitude: 44.46300, longitude: 8.60577),
-        Icons.pin_drop, Colors.red, "Caro"),
-    VaraMarker("Caro", GeoPoint(latitude: 44.46400, longitude: 8.60330),
-        Icons.pin_drop, Colors.red, "Caro"),
-    VaraMarker("Signora", GeoPoint(latitude: 44.46400, longitude: 8.60070),
-        Icons.pin_drop, Colors.red, "Vara"),
-    VaraMarker("Fiume", GeoPoint(latitude: 44.46390, longitude: 8.60070),
-        Icons.pin_drop, Colors.red, "Fiume"),
-    VaraMarker("Pazzo", GeoPoint(latitude: 44.46400, longitude: 8.60190),
-        Icons.pin_drop, Colors.red, "Pazzo"),
-    VaraMarker("Vara", GeoPoint(latitude: 44.46400, longitude: 8.60222),
-        Icons.pin_drop, Colors.red, "Vara"),
-    VaraMarker("Vara", GeoPoint(latitude: 44.46777, longitude: 8.60070),
-        Icons.pin_drop, Colors.red, "Vara"),
-  ];
-
-  selectMarker(GeoPoint point) {
-    if (lastSelected != -1) {
-      marker[lastSelected].selected = false;
-    }
-    for (int i = 0; i < marker.length; i++) {
-      if (marker[i].position == point) {
-        marker[i].selected = true;
-        lastSelected = i;
-      }
-    }
-  }
-
-  VaraMarker getMarker(GeoPoint point) {
-    for (int i = 0; i < marker.length; i++) {
-      if (marker[i].position == point) {
-        return marker[i];
-      }
-    }
-    return marker[0];
-  }
-
-  List<VaraMarker> getMarkerList() {
-    return marker;
   }
 }
