@@ -5,8 +5,9 @@ import 'package:material_symbols_icons/material_symbols_icons.dart';
 
 class CustomScrollViewContent extends StatelessWidget {
 
-  VaraMarker selectedMarker;
-  CustomScrollViewContent({
+  final VaraMarker selectedMarker;
+  
+  const CustomScrollViewContent({
     Key? key,
     required this.selectedMarker
   }) : super(key: key);
@@ -16,10 +17,10 @@ class CustomScrollViewContent extends StatelessWidget {
     return Container(
       decoration: const BoxDecoration(
         borderRadius: BorderRadius.only(topLeft: Radius.circular(24), topRight: Radius.circular(24)),
-        color: Colors.lightGreenAccent,
+        color: Colors.white,
       ),
       child: Column(
-        children: <Widget>[
+        children: [
           const SizedBox(height: 12), Container(
             height: 5,
             width: 30,
@@ -32,234 +33,10 @@ class CustomScrollViewContent extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text(selectedMarker.name, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                Text("See All", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(left: 16),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  CustomRestaurantCategory(),
-                  const SizedBox(width: 12),
-                  CustomRestaurantCategory(),
-                  const SizedBox(width: 12),
-                  CustomRestaurantCategory(),
-                  const SizedBox(width: 12),
-                  CustomRestaurantCategory(),
-                  const SizedBox(width: 12),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 24),
-          const Padding(
-            padding: EdgeInsets.only(left: 16),
-            //only to left align the text
-            child: Row(
-              children: <Widget>[Text("Featured Lists", style: TextStyle(fontSize: 14))],
-            ),
-          ),
-          const SizedBox(height: 16),
-          Padding(
-            padding: const EdgeInsets.only(left: 16),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  CustomRestaurantCategory(),
-                  const SizedBox(width: 12),
-                  CustomRestaurantCategory(),
-                  const SizedBox(width: 12),
-                  CustomRestaurantCategory(),
-                  const SizedBox(width: 12),
-                  CustomRestaurantCategory(),
-                  const SizedBox(width: 12),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 24),
-          const Padding(
-            padding: EdgeInsets.only(left: 16),
-            //only to left align the text
-            child: Row(
-              children: <Widget>[Text("Featured Lists", style: TextStyle(fontSize: 14))],
-            ),
-          ),
-          const SizedBox(height: 16),
-          Padding(
-            padding: const EdgeInsets.only(left: 16),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  CustomRestaurantCategory(),
-                  const SizedBox(width: 12),
-                  CustomRestaurantCategory(),
-                  const SizedBox(width: 12),
-                  CustomRestaurantCategory(),
-                  const SizedBox(width: 12),
-                  CustomRestaurantCategory(),
-                  const SizedBox(width: 12),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 24),
-          const Padding(
-            padding: EdgeInsets.only(left: 16),
-            //only to left align the text
-            child: Row(
-              children: <Widget>[Text("Featured Lists", style: TextStyle(fontSize: 14))],
-            ),
-          ),
-          const SizedBox(height: 16),
-          Padding(
-            padding: const EdgeInsets.only(left: 16),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  CustomRestaurantCategory(),
-                  const SizedBox(width: 12),
-                  CustomRestaurantCategory(),
-                  const SizedBox(width: 12),
-                  CustomRestaurantCategory(),
-                  const SizedBox(width: 12),
-                  CustomRestaurantCategory(),
-                  const SizedBox(width: 12),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 24),
-          const Padding(
-            padding: EdgeInsets.only(left: 16),
-            //only to left align the text
-            child: Row(
-              children: <Widget>[Text("Featured Lists", style: TextStyle(fontSize: 14))],
-            ),
-          ),
-          const SizedBox(height: 16),
-          Padding(
-            padding: const EdgeInsets.only(left: 16),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  CustomRestaurantCategory(),
-                  const SizedBox(width: 12),
-                  CustomRestaurantCategory(),
-                  const SizedBox(width: 12),
-                  CustomRestaurantCategory(),
-                  const SizedBox(width: 12),
-                  CustomRestaurantCategory(),
-                  const SizedBox(width: 12),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 24),
-          const Padding(
-            padding: EdgeInsets.only(left: 16),
-            //only to left align the text
-            child: Row(
-              children: <Widget>[Text("Featured Lists", style: TextStyle(fontSize: 14))],
-            ),
-          ),
-          const SizedBox(height: 16),
-          Padding(
-            padding: const EdgeInsets.only(left: 16),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  CustomRestaurantCategory(),
-                  SizedBox(width: 12),
-                  CustomRestaurantCategory(),
-                  SizedBox(width: 12),
-                  CustomRestaurantCategory(),
-                  SizedBox(width: 12),
-                  CustomRestaurantCategory(),
-                  SizedBox(width: 12),
-                ],
-              ),
-            ),
-          ),
-          SizedBox(height: 24),
-          Padding(
-            padding: const EdgeInsets.only(left: 16),
-            //only to left align the text
-            child: Row(
-              children: <Widget>[Text("Featured Lists", style: TextStyle(fontSize: 14))],
-            ),
-          ),
-          SizedBox(height: 16),
-          Padding(
-            padding: const EdgeInsets.only(left: 16),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  CustomRestaurantCategory(),
-                  SizedBox(width: 12),
-                  CustomRestaurantCategory(),
-                  SizedBox(width: 12),
-                  CustomRestaurantCategory(),
-                  SizedBox(width: 12),
-                  CustomRestaurantCategory(),
-                  SizedBox(width: 12),
-                ],
-              ),
-            ),
-          ),
-          SizedBox(height: 24),
-          Padding(
-            padding: const EdgeInsets.only(left: 16),
-            //only to left align the text
-            child: Row(
-              children: <Widget>[Text("Featured Lists", style: TextStyle(fontSize: 14))],
-            ),
-          ),
-          SizedBox(height: 16),
-          Padding(
-            padding: const EdgeInsets.only(left: 16),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  CustomRestaurantCategory(),
-                  SizedBox(width: 12),
-                  CustomRestaurantCategory(),
-                  SizedBox(width: 12),
-                  CustomRestaurantCategory(),
-                  SizedBox(width: 12),
-                  CustomRestaurantCategory(),
-                  SizedBox(width: 12),
-                ],
-              ),
-            ),
-          ),
-          SizedBox(height: 24),
-          Padding(
-            padding: const EdgeInsets.only(left: 16),
-            //only to left align the text
-            child: Row(
-              children: <Widget>[Text("Featured Lists", style: TextStyle(fontSize: 14))],
-            ),
-          ),
-          SizedBox(height: 34)
+
         ],
       ),
     );
